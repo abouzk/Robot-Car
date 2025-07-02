@@ -12,18 +12,18 @@
 
 //Encoder test
 #define ENCA1 2 //right
-#define ENCB1 4 //
+#define ENCB1 4 //second right wheel encoder trigger to determine direction
 #define ENCA2 3 //left
-#define ENCB2 5 //
-#define readA1 bitRead(PIND,2)//faster than digitalRead()
+#define ENCB2 5 //second left encoder
+#define readA1 bitRead(PIND,2) //faster than digitalRead()
 #define readB1 bitRead(PIND,3)
 
-int r_pos = 0;
-int l_pos = 0;
+int r_pos = 0; //track right wheel movement
+int l_pos = 0; //track left
 
 
 // Ultrasonic sensor pins
-const int trigPin = 13;
+const int trigPin = 13; //I needed to use 'digital' pins, which only certain pins counted as, leading to a space challenge and some creativity to solve the issue
 const int echoPin = 8;
 float duration, distance;
 
@@ -45,7 +45,12 @@ void setup() {
   pinMode(ENCB2,INPUT);
 
   //encoder interrupt
-  attachInterrupt(digitalPinToInterrupt(ENCA1), rightEncoder, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENCA1), rightEncoder, CHANGE); //these interrupts had to be on the 
+  //previously mentioned specific pins, of which only two remained. My initial implementation used 4, per the standard for 2 signal encoders, to determine
+  //direction, but I figured out how to use only 2 pins by checking if there was any change to the encoder on just one pin and determining the order later
+  //in the rightEncoder() and leftEncoder() functions, which then compare the encoder with the change to the second encoder trigger on that wheel
+  //to determine if the second encoder has been triggered yet, letting me know which direction the wheel is turning. In one case, the second trigger will
+  //have been triggered, while in the other, it wouldn't. This method is the core of tracking wheel movement.
   attachInterrupt(digitalPinToInterrupt(ENCA2), leftEncoder, CHANGE);
 
   // Initialize ultrasonic sensor pins
@@ -67,7 +72,7 @@ void loop() {
 }
 
 void rightEncoder() {
-  if (digitalRead(ENCA1) == digitalRead(ENCB1)) {
+  if (digitalRead(ENCA1) == digitalRead(ENCB1)) { //aforementioned comparison
     r_pos++; // Forward
   } else {
     r_pos--; // Reverse
@@ -83,7 +88,7 @@ void leftEncoder() {
   }
 }
 
-void driveForward(float distance) {
+void driveForward(float distance) { //takes in a distance in meters
   digitalWrite(IN1, HIGH); //forward right
   digitalWrite(IN2, LOW);
   analogWrite(ENA, 148);
@@ -111,7 +116,7 @@ float measureDistance() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
 
-  // Trigger the sensor by setting the trigPin HIGH for 10 microseconds
+  // Trigger the sensor by setting the trigPin HIGH for 10 microseconds, sending out the signal that is read by the other sensor's 'eye'
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
@@ -120,7 +125,7 @@ float measureDistance() {
   duration = pulseIn(echoPin, HIGH, 30000); // Timeout after 30ms (for max distance)
 
   // Calculate the distance in centimeters
-  distanceCm = (duration / 2.0) * 0.0343;
+  distanceCm = (duration / 2.0) * 0.0343; //dividing by 2 because the signal goes out to the object, then bounces and comes back
 
   // Handle out-of-range values
   if (duration == 0) {
