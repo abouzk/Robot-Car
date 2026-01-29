@@ -2,6 +2,7 @@
 **Role:** Systems Integrator & Firmware Developer | **Platform:** Arduino Mega (C++)
 
 ![Final System](media/final_system_deployment.jpg)
+
 *(Phase 3: Final deployed prototype with custom enclosure for campus environments)*
 
 ## 1. Project Overview
