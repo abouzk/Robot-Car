@@ -16,6 +16,7 @@ The robot utilizes a **Differential Drive** kinematics model controlled by an **
 * **Power:** 12V DC Independent Power Supply (8xAA Array) for mobile autonomy
 
 ![Hardware Integration](media/hardware_integration_breadboard.jpg)
+
 *(Phase 1: Electrical subsystem integration and signal validation)*
 
 ## 3. Technical Implementation
