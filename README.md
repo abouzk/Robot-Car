@@ -31,7 +31,7 @@ Implemented a **Proportional (P) Controller** to correct heading drift in real-t
 * **Correction:** Dynamically adjusts PWM duty cycle (`analogWrite`) to synchronize wheel velocities
 * *See `driveForward()` function in `RoboCan_StartStop.ino`*
 
-### C. Safety Architecture (ISO 13482 Inspired)
+### C. Safety Architecture
 The system features a "Safety Override" layer that preempts navigation commands.
 * **Obstacle-Dependent Hysteresis:** Implemented a 'Stop-and-Wait' state machine. Upon detecting an obstacle (<20cm), the system enters a holding state until the path clears, preventing oscillation or collision
 * **Recovery:** System enters a "Wait & Scan" state before attempting path re-calculation
